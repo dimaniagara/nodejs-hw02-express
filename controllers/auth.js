@@ -66,9 +66,8 @@ const signUp = async (req, res) => {
   });
 };
 
-const avatarDir = path.join(__dirname, "../", "public", "avatars");
-
 const setAvatar = async (req, res) => {
+  const avatarDir = path.join(__dirname, "../", "public", "avatars");
   const { path: tmpUpload, originalname } = req.file;
   const { _id } = req.user;
   const filename = `${_id}_${originalname}`;
