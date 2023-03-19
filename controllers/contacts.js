@@ -46,7 +46,7 @@ const updateStatusContact = async (req, res) => {
   res.json(result);
 };
 
-module.exports = {
+const contactsCtrl = {
   getContactsList: catcherWrapper(getContactsList),
   getContact: catcherWrapper(getContact),
   addNewContact: catcherWrapper(addNewContact),
@@ -54,3 +54,5 @@ module.exports = {
   deleteContact: catcherWrapper(deleteContact),
   updateStatusContact: catcherWrapper(updateStatusContact),
 };
+
+module.exports = contactsCtrl;
