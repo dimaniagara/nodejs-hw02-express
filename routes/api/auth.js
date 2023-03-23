@@ -25,6 +25,14 @@ router.patch(
   authCtrl.setAvatar
 );
 
+router.post(
+  "/verify",
+  validateBody(userSchemas.emailSchema),
+  authCtrl.resendVerifyEmail
+);
+
+router.get("/verify/:verificationToken", authCtrl.verifyEmail);
+
 router.post("/login", validateBody(userSchemas.loginSchema), authCtrl.logIn);
 
 router.get("/current", authenticate, authCtrl.getCurrent);
