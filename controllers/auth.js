@@ -1,4 +1,8 @@
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
+
+const fs = require("fs/promises");
+const path = require("path");
 
 const { User } = require("../models");
 const { handlerError, catcherWrapper } = require("../utils");
@@ -52,12 +56,27 @@ const signUp = async (req, res) => {
   const user = await User.findOne({ email });
   if (user) throw handlerError(409, "Email already in use");
   const hash = await bcrypt.hash(password, 10);
+  const avatarURL = gravatar.url(email);
 
-  const newUser = await User.create({ ...req.body, password: hash });
+  const newUser = await User.create({ ...req.body, password: hash, avatarURL });
   res.status(201).json({
     email: newUser.email,
     name: newUser.name,
+    avatarURL: "link to the image will be here",
   });
+};
+
+const setAvatar = async (req, res) => {
+  const avatarDir = path.join(__dirname, "../", "public", "avatars");
+  const { path: tmpUpload, originalname } = req.file;
+  const { _id } = req.user;
+  const filename = `${_id}_${originalname}`;
+  const resultUpload = path.join(avatarDir, filename);
+  await fs.rename(tmpUpload, resultUpload);
+  const avatarURL = path.join("avatars", filename);
+  await User.findByIdAndUpdate(_id, { avatarURL });
+
+  res.json({ avatarURL });
 };
 
 const authCtrl = {
@@ -66,6 +85,7 @@ const authCtrl = {
   logIn: catcherWrapper(logIn),
   updateSubdiscription: catcherWrapper(updateSubdiscription),
   signUp: catcherWrapper(signUp),
+  setAvatar: catcherWrapper(setAvatar),
 };
 
 module.exports = authCtrl;
